@@ -25,6 +25,7 @@ namespace reef2_truth{
         keyframe_subs_ = nh_.subscribe<std_msgs::Empty>("keyframe_now",1, &Truth::keyframeCallback, this);
 
         true_state_pub = nh_.advertise<reef_msgs::XYZEstimate>("true_state", 1);
+        true_keyframe_pub = nh_.advertise<geometry_msgs::PoseStamped>("true_keyframe",1);
 
         if(verify_implementation){
             integrated_odom_publisher = nh_.advertise<geometry_msgs::PoseStamped>("truth/integrated_odom",1);
@@ -86,13 +87,17 @@ namespace reef2_truth{
         if(keyframe_now){
             current_keyframe = current_body_level_pose;
             keyframe_now = false;
+            geometry_msgs::PoseStamped keyframe;
+            keyframe.pose = tf2::toMsg(current_delta);
+            keyframe.header = header;
+            true_keyframe_pub.publish(keyframe);
+
             if(verify_implementation) {
                 keyframe_for_verification = current_pose;
                 body_to_body_level_at_keyframe_time = getLevelFrameTransform(keyframe_for_verification).inverse();
             }
         }
 
-        Eigen::Affine3d current_delta;
         /// Calculate the delta i.e the pose of the body w.r.t keyframe in the bodylevel frame
         current_delta = current_keyframe.inverse() * current_body_level_pose;
 

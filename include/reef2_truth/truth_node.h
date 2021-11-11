@@ -34,8 +34,7 @@ namespace reef2_truth{
 
         ros::Publisher true_state_pub;
         ros::Publisher integrated_odom_publisher;
-        ros::Publisher temp1;
-        ros::Publisher temp2;
+        ros::Publisher true_keyframe_pub;
 
         bool initialized_;
         bool keyframe_now;
@@ -54,6 +53,7 @@ namespace reef2_truth{
         Eigen::Affine3d global_pose;
         Eigen::Affine3d keyframe_for_verification;
         Eigen::Affine3d body_to_body_level_at_keyframe_time;
+        Eigen::Affine3d current_delta;
 
         ros::Time previous_time;
         ros::Time current_time;
